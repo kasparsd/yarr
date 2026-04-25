@@ -1,3 +1,5 @@
+# Build
+
 ## Compilation
 
 Prerequisies:
@@ -20,7 +22,7 @@ Compile:
     make linux_arm64
 
     # ... or build a docker image
-    docker build -t yarr -f etc/dockerfile .
+    docker build -t yarr
 
 Run locally:
 
@@ -30,9 +32,7 @@ Build a multi-arch image:
 
     docker buildx build \
       --platform linux/amd64,linux/arm64 \
-      -t yarr:latest \
-      -f etc/dockerfile \
-      .
+      -t yarr:latest
 
 Run the image:
 
