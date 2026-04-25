@@ -25,7 +25,7 @@ linux_arm64:
 	go build $(GO_FLAGS) -o out/$@/yarr ./cmd/yarr
 
 serve:
-	go run $(GO_FLAGS_DEBUG) ./cmd/yarr -addr 127.0.0.1:7070 -db local.db
+	go run $(GO_FLAGS_DEBUG) ./cmd/yarr -db local.db
 
 test:
 	go test $(GO_FLAGS) ./...
