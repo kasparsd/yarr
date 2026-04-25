@@ -35,4 +35,4 @@ jobs:
         with:
           files: |
             dist/*.tar.gz
-            dist/*_checksums.txt
+            dist/*-checksums.txt

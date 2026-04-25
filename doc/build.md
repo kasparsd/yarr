@@ -58,5 +58,6 @@ Build metadata is derived from Git:
 
 1. Create and push a version tag such as `v2.7`.
 2. The GitHub release workflow builds Linux `amd64` and `arm64` archives plus a SHA256 checksum file.
+    Artifact names follow the dashed form `yarr-<version>-linux-amd64.tar.gz`, `yarr-<version>-linux-arm64.tar.gz`, and `yarr-<version>-checksums.txt`.
 3. The Docker publish workflow builds and pushes the multi-arch image.
 4. Verify the resulting binary reports the expected version with `./dist/host/yarr -version` or by running a release artifact.

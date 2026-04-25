@@ -69,6 +69,7 @@ ls dist/
 ```
 
 This produces versioned Linux archives and a checksum file suitable for GitHub Releases.
+Archive names use dashed Go-style platform suffixes, for example `yarr-2.6-linux-amd64.tar.gz`.
 
 Multi-arch image build:
 

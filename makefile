@@ -4,8 +4,8 @@ GITHASH := $(shell git rev-parse --short=8 HEAD 2>/dev/null || echo unknown)
 DIST_DIR        := dist
 HOST_BIN        := $(DIST_DIR)/host/yarr
 RELEASE_DIR     := $(DIST_DIR)/release/$(VERSION)
-RELEASE_PREFIX  := $(DIST_DIR)/yarr_$(VERSION)
-CHECKSUM_FILE   := $(RELEASE_PREFIX)_checksums.txt
+RELEASE_PREFIX  := $(DIST_DIR)/yarr-$(VERSION)
+CHECKSUM_FILE   := $(RELEASE_PREFIX)-checksums.txt
 
 GO_TAGS    = sqlite_foreign_keys sqlite_json
 GO_LDFLAGS = -s -w -X 'main.Version=$(VERSION)' -X 'main.GitHash=$(GITHASH)'
@@ -33,16 +33,16 @@ linux_arm64:
 	CC="zig cc -target aarch64-linux-musl -O2 -g0" CGO_CFLAGS="-D_LARGEFILE64_SOURCE" GOOS=linux GOARCH=arm64 \
 	go build $(GO_FLAGS) -o $(RELEASE_DIR)/linux_arm64/yarr ./cmd/yarr
 
-release: $(RELEASE_PREFIX)_linux_amd64.tar.gz $(RELEASE_PREFIX)_linux_arm64.tar.gz $(CHECKSUM_FILE)
+release: $(RELEASE_PREFIX)-linux-amd64.tar.gz $(RELEASE_PREFIX)-linux-arm64.tar.gz $(CHECKSUM_FILE)
 
-$(RELEASE_PREFIX)_linux_amd64.tar.gz: linux_amd64
+$(RELEASE_PREFIX)-linux-amd64.tar.gz: linux_amd64
 	tar -C $(RELEASE_DIR)/linux_amd64 -czf $@ yarr
 
-$(RELEASE_PREFIX)_linux_arm64.tar.gz: linux_arm64
+$(RELEASE_PREFIX)-linux-arm64.tar.gz: linux_arm64
 	tar -C $(RELEASE_DIR)/linux_arm64 -czf $@ yarr
 
-$(CHECKSUM_FILE): $(RELEASE_PREFIX)_linux_amd64.tar.gz $(RELEASE_PREFIX)_linux_arm64.tar.gz
-	cd $(DIST_DIR) && shasum -a 256 $(notdir $(RELEASE_PREFIX)_linux_amd64.tar.gz) $(notdir $(RELEASE_PREFIX)_linux_arm64.tar.gz) > $(notdir $@)
+$(CHECKSUM_FILE): $(RELEASE_PREFIX)-linux-amd64.tar.gz $(RELEASE_PREFIX)-linux-arm64.tar.gz
+	cd $(DIST_DIR) && shasum -a 256 $(notdir $(RELEASE_PREFIX)-linux-amd64.tar.gz) $(notdir $(RELEASE_PREFIX)-linux-arm64.tar.gz) > $(notdir $@)
 
 docker:
 	docker build -t yarr:$(VERSION) .
