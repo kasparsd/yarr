@@ -211,7 +211,6 @@ var vm = new Vue({
     api.feeds.list_errors().then(function(errors) {
       vm.feed_errors = errors
     })
-    this.updateMetaTheme(app.settings.theme_name)
   },
   data: function() {
     var s = app.settings
@@ -245,15 +244,9 @@ var vm = new Vue({
       },
       'fonts': ['', 'serif', 'monospace'],
       'feedStats': {},
-      'theme': {
-        'name': s.theme_name,
+      'appearance': {
         'font': s.theme_font,
         'size': s.theme_size,
-      },
-      'themeColors': {
-        'night': '#0e0e0e',
-        'sepia': '#f4f0e5',
-        'light': '#fff',
       },
       'refreshRate': s.refresh_rate,
       'authenticated': app.authenticated,
@@ -333,15 +326,12 @@ var vm = new Vue({
     },
   },
   watch: {
-    'theme': {
+    'appearance': {
       deep: true,
-      handler: function(theme) {
-        this.updateMetaTheme(theme.name)
-        document.body.classList.value = 'theme-' + theme.name
+      handler: function(appearance) {
         api.settings.update({
-          theme_name: theme.name,
-          theme_font: theme.font,
-          theme_size: theme.size,
+          theme_font: appearance.font,
+          theme_size: appearance.size,
         })
       },
     },
@@ -416,9 +406,6 @@ var vm = new Vue({
     },
   },
   methods: {
-    updateMetaTheme: function(theme) {
-      document.querySelector("meta[name='theme-color']").content = this.themeColors[theme]
-    },
     refreshStats: function(loopMode) {
       return api.status().then(function(data) {
         if (loopMode && !vm.itemSelected) vm.refreshItems()
@@ -712,7 +699,7 @@ var vm = new Vue({
       this.feedNewChoiceSelected = ''
     },
     incrFont: function(x) {
-      this.theme.size = +(this.theme.size + (0.1 * x)).toFixed(1)
+      this.appearance.size = +(this.appearance.size + (0.1 * x)).toFixed(1)
     },
     fetchAllFeeds: function() {
       if (this.loading.feeds) return

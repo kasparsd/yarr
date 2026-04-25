@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -72,6 +73,56 @@ func TestIndexGzipped(t *testing.T) {
 	}
 	if response.Header.Get("content-type") != "text/html" {
 		t.Errorf("invalid content-type header: %#v", response.Header.Get("content-type"))
+	}
+}
+
+func TestIndexIncludesAutoThemeBootstrap(t *testing.T) {
+	log.SetOutput(io.Discard)
+	db, _ := storage.New(":memory:")
+	log.SetOutput(os.Stderr)
+
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest("GET", "/", nil)
+
+	handler := NewServer(db, "127.0.0.1:8000").handler()
+	handler.ServeHTTP(recorder, request)
+	response := recorder.Result()
+
+	if response.StatusCode != http.StatusOK {
+		t.Fatal(response.StatusCode)
+	}
+	body, _ := io.ReadAll(response.Body)
+	if bytes.Contains(body, []byte("./static/javascripts/theme.js")) {
+		t.Fatal("unexpected theme bootstrap")
+	}
+	if !bytes.Contains(body, []byte("<body>")) {
+		t.Fatal("missing plain body tag")
+	}
+}
+
+func TestLoginIncludesAutoThemeBootstrap(t *testing.T) {
+	log.SetOutput(io.Discard)
+	db, _ := storage.New(":memory:")
+	log.SetOutput(os.Stderr)
+
+	server := NewServer(db, "127.0.0.1:8000")
+	server.Username = "user"
+	server.Password = "pass"
+
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest("GET", "/", nil)
+	server.handler().ServeHTTP(recorder, request)
+	response := recorder.Result()
+
+	if response.StatusCode != http.StatusOK {
+		t.Fatal(response.StatusCode)
+	}
+	body, _ := io.ReadAll(response.Body)
+	if bytes.Contains(body, []byte("./static/javascripts/theme.js")) {
+		t.Fatal("unexpected theme bootstrap")
+	}
+	if !bytes.Contains(body, []byte("<body>")) {
+		t.Fatal("missing plain body tag")
 	}
 }
 
