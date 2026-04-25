@@ -52,24 +52,19 @@ See `yarr -h` for the full runtime help text.
 
 ## development
 
-Local development build:
+Local development run:
 
 ```sh
-make host
-./dist/host/yarr -addr 127.0.0.1:7070 -db local.db
+make serve
+```
+
+Local image build:
+
+```sh
+make docker
 ```
 
 Tagged releases derive the embedded version from Git tags. Untagged builds fall back to the nearest Git description plus the short commit hash.
-
-Binary release artifacts:
-
-```sh
-make release
-ls dist/
-```
-
-This produces versioned Linux archives and a checksum file suitable for GitHub Releases.
-Archive names use dashed Go-style platform suffixes, for example `yarr-2.6-linux-amd64.tar.gz`.
 
 Multi-arch image build:
 
@@ -85,7 +80,6 @@ docker buildx build \
 
 Pushing a `v*` Git tag publishes:
 
-* Linux release archives and SHA256 checksums to GitHub Releases
 * Multi-arch container images to `ghcr.io/kasparsd/yarr`
 
 See more:
