@@ -24,6 +24,12 @@ linux_arm64:
 	CC="zig cc -target aarch64-linux-musl -O2 -g0" CGO_CFLAGS="-D_LARGEFILE64_SOURCE" GOOS=linux GOARCH=arm64 \
 	go build $(GO_FLAGS) -o out/$@/yarr ./cmd/yarr
 
+docker:
+	docker build .
+
+docker-multiarch:
+	docker buildx build --platform linux/amd64,linux/arm64 .
+
 serve:
 	go run $(GO_FLAGS_DEBUG) ./cmd/yarr -db local.db
 
@@ -33,4 +39,5 @@ test:
 .PHONY: \
 	host \
 	linux_amd64 linux_arm64 \
+	docker docker-multiarch \
 	serve test
