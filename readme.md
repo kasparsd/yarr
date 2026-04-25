@@ -1,33 +1,73 @@
 # yarr
 
-**yarr** (yet another rss reader) is a web-based feed aggregator which can be used both
-as a desktop application and a personal self-hosted server.
+**yarr** (yet another rss reader) is a self-hosted feed reader service with an embedded web frontend and REST API.
 
 The app is a single binary with an embedded database (SQLite).
 
 ![screenshot](etc/promo.png)
 
-## usage
+## quick start
 
-The latest prebuilt binaries for Linux/MacOS/Windows are available
-[here](https://github.com/nkanaev/yarr/releases/latest).
-The archives follow the naming convention `yarr_{OS}_{ARCH}[_gui].zip`, where:
+Run the published container image or build one locally. The supported deployment targets are Linux containers for `amd64` and `arm64`.
 
-* `OS` is the target operating system
-* `ARCH` is the CPU architecture (`arm64` for AArch64, `amd64` for X86-64)
-* `-gui` indicates that the binary ships with the GUI (tray icon), and is a command line application if omitted
+```sh
+docker run -d \
+  --name yarr \
+  -p 7070:7070 \
+  -v yarr_data:/data \
+  -e YARR_ADDR=0.0.0.0:7070 \
+  ghcr.io/kasparsd/yarr:latest
+```
 
-Usage instructions:
+Open `http://localhost:7070` in a browser.
 
-* MacOS: place `yarr.app` in `/Applications` folder, [open the app][macos-open], click the anchor menu bar icon, select "Open".
+To enable HTTP basic auth:
 
-* Windows: open `yarr.exe`, click the anchor system tray icon, select "Open".
+```sh
+docker run -d \
+  --name yarr \
+  -p 7070:7070 \
+  -v yarr_data:/data \
+  -e YARR_ADDR=0.0.0.0:7070 \
+  -e YARR_AUTH=admin:change-me \
+  ghcr.io/kasparsd/yarr:latest
+```
 
-* Linux: place `yarr` in `$HOME/.local/bin` and run [the script](etc/install-linux.sh).
+The service stores its SQLite database at `/data/yarr.db` by default in the container.
 
-[macos-open]: https://support.apple.com/en-gb/guide/mac-help/mh40616/mac
+## configuration
 
-For self-hosting, see `yarr -h` for auth, tls & server configuration flags.
+Configuration is available via flags or environment variables:
+
+* `-addr` / `YARR_ADDR`: bind address, for example `0.0.0.0:7070`
+* `-db` / `YARR_DB`: database path
+* `-auth` / `YARR_AUTH`: HTTP basic auth as `username:password`
+* `-auth-file` / `YARR_AUTHFILE`: path to a file containing `username:password`
+* `-base` / `YARR_BASE`: optional base path prefix
+* `-cert-file` / `YARR_CERTFILE`: TLS certificate path
+* `-key-file` / `YARR_KEYFILE`: TLS private key path
+* `-log-file` / `YARR_LOGFILE`: optional log file path
+
+See `yarr -h` for the full runtime help text.
+
+## development
+
+Local development build:
+
+```sh
+make host
+./out/yarr -addr 127.0.0.1:7070 -db local.db
+```
+
+Multi-arch image build:
+
+```sh
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t yarr:latest \
+  -f etc/dockerfile \
+  .
+```
 
 See more:
 

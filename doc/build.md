@@ -4,8 +4,7 @@ Prerequisies:
 
 * Go >= 1.23
 * C Compiler (GCC / Clang / ...)
-* Zig >= 0.14.0 (optional, for cross-compiling CLI versions)
-* binutils (optional, for building Windows GUI version)
+* Zig >= 0.14.0 (optional, for Linux cross-compilation)
 
 Get the source code:
 
@@ -13,44 +12,31 @@ Get the source code:
 
 Compile:
 
-    # create cli for the host OS/architecture
+    # build the service binary for the host OS/architecture
     make host               # out/yarr
 
-    # create GUI, works only in the target OS
-    make windows_amd64_gui  # out/windows_amd64_gui/yarr.exe
-    make windows_arm64_gui  # out/windows_arm64_gui/yarr.exe
-    make darwin_arm64_gui   # out/darwin_arm64_gui/yarr.app
-    make darwin_amd64_gui   # out/darwin_amd64_gui/yarr.app
-
-    # create cli, cross-compiles within any OS/architecture
+    # cross-compile Linux service binaries
     make linux_amd64
     make linux_arm64
-    make linux_armv7
-    make windows_amd64
-    make windows_arm64
 
     # ... or build a docker image
     docker build -t yarr -f etc/dockerfile .
 
-## ARM compilation
+Run locally:
 
-The instructions below are to cross-compile *yarr* to `Linux/ARM*`.
+    ./out/yarr -addr 127.0.0.1:7070 -db local.db
 
-Build:
+Build a multi-arch image:
 
-    docker build -t yarr.arm -f etc/dockerfile.arm .
+    docker buildx build \
+      --platform linux/amd64,linux/arm64 \
+      -t yarr:latest \
+      -f etc/dockerfile \
+      .
 
-Test:
+Run the image:
 
-    # inside host
-    docker run -it --rm yarr.arm
-
-    # then, inside container
-    cd /root/out
-    qemu-aarch64 -L /usr/aarch64-linux-gnu/ yarr.arm64
-
-Extract files from images:
-
-    CID=$(docker create yarr.arm)
-    docker cp -a "$CID:/root/out" .
-    docker rm "$CID"
+    docker run -it --rm \
+      -p 7070:7070 \
+      -v yarr_data:/data \
+      yarr:latest -addr 0.0.0.0:7070 -db /data/yarr.db

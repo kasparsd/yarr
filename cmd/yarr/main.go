@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/nkanaev/yarr/src/platform"
 	"github.com/nkanaev/yarr/src/server"
 	"github.com/nkanaev/yarr/src/storage"
 	"github.com/nkanaev/yarr/src/worker"
@@ -40,16 +39,14 @@ func parseAuthfile(authfile io.Reader) (username, password string, err error) {
 		}
 		username = parts[0]
 		password = parts[1]
-		break
+		return username, password, nil
 	}
-	return username, password, nil
+	return username, password, scanner.Err()
 }
 
 func main() {
-	platform.FixConsoleIfNeeded()
-
 	var addr, db, authfile, auth, certfile, keyfile, basepath, logfile string
-	var ver, open bool
+	var ver bool
 
 	flag.CommandLine.SetOutput(os.Stdout)
 
@@ -70,7 +67,6 @@ func main() {
 	flag.StringVar(&db, "db", opt("YARR_DB", ""), "storage file `path`")
 	flag.StringVar(&logfile, "log-file", opt("YARR_LOGFILE", ""), "`path` to log file to use instead of stdout")
 	flag.BoolVar(&ver, "version", false, "print application version")
-	flag.BoolVar(&open, "open", false, "open the server in browser")
 	flag.Parse()
 
 	if ver {
@@ -88,10 +84,6 @@ func main() {
 		log.SetOutput(file)
 	} else {
 		log.SetOutput(os.Stdout)
-	}
-
-	if open && strings.HasPrefix(addr, "unix:") {
-		log.Fatal("Cannot open ", addr, " in browser")
 	}
 
 	if db == "" {
@@ -155,8 +147,5 @@ func main() {
 	}
 
 	log.Printf("starting server at %s", srv.GetAddr())
-	if open {
-		platform.Open(srv.GetAddr())
-	}
-	platform.Start(srv)
+	srv.Start()
 }

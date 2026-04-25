@@ -4,8 +4,8 @@ The goal is to ship a (subjectively ergonomic) software for reading feeds.
 *yarr* is not designed/intended to be used as an archiving tool.
 
 The initial goal was to serve the author's needs:
-a desktop application accessible via web browser
-(because keeping 2 apps running, feed reader & browser, was annoying).
+a self-hosted web application accessible via browser
+(because keeping a separate native feed reader and browser open was annoying).
 
 # interface
 
@@ -58,5 +58,5 @@ The reasons for Go:
 - the author's excuse to learn go
 
 The reasons for SQLite:
-- lack of need for db setup (huge plus for desktop)
+- lack of need for db setup (huge plus for self-hosting)
 - SQL is boring & practical
