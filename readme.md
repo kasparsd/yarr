@@ -56,8 +56,19 @@ Local development build:
 
 ```sh
 make host
-./out/yarr -addr 127.0.0.1:7070 -db local.db
+./dist/host/yarr -addr 127.0.0.1:7070 -db local.db
 ```
+
+Tagged releases derive the embedded version from Git tags. Untagged builds fall back to the nearest Git description plus the short commit hash.
+
+Binary release artifacts:
+
+```sh
+make release
+ls dist/
+```
+
+This produces versioned Linux archives and a checksum file suitable for GitHub Releases.
 
 Multi-arch image build:
 
@@ -68,6 +79,13 @@ docker buildx build \
   -f Dockerfile \
   .
 ```
+
+## releases
+
+Pushing a `v*` Git tag publishes:
+
+* Linux release archives and SHA256 checksums to GitHub Releases
+* Multi-arch container images to `ghcr.io/kasparsd/yarr`
 
 See more:
 

@@ -15,24 +15,29 @@ Get the source code:
 Compile:
 
     # build the service binary for the host OS/architecture
-    make host               # out/yarr
+    make host               # dist/host/yarr
 
     # cross-compile Linux service binaries
     make linux_amd64
     make linux_arm64
 
+    # create release archives and checksums under dist/
+    make release
+
     # ... or build a docker image
-    docker build -t yarr
+    docker build -t yarr .
 
 Run locally:
 
-    ./out/yarr -addr 127.0.0.1:7070 -db local.db
+    ./dist/host/yarr -addr 127.0.0.1:7070 -db local.db
 
 Build a multi-arch image:
 
     docker buildx build \
       --platform linux/amd64,linux/arm64 \
-      -t yarr:latest
+      -t yarr:latest \
+      -f Dockerfile \
+      .
 
 Run the image:
 
@@ -40,3 +45,18 @@ Run the image:
       -p 7070:7070 \
       -v yarr_data:/data \
       yarr:latest -addr 0.0.0.0:7070 -db /data/yarr.db
+
+## Versioning
+
+Build metadata is derived from Git:
+
+* release tags such as `v2.6` become binary version `2.6`
+* untagged builds use `git describe --tags --always --dirty`
+* the short Git hash is injected separately and shown by `yarr -version`
+
+## Release process
+
+1. Create and push a version tag such as `v2.7`.
+2. The GitHub release workflow builds Linux `amd64` and `arm64` archives plus a SHA256 checksum file.
+3. The Docker publish workflow builds and pushes the multi-arch image.
+4. Verify the resulting binary reports the expected version with `./dist/host/yarr -version` or by running a release artifact.

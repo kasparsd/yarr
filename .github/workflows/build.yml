@@ -2,6 +2,7 @@ name: Build
 
 on:
   push:
+  pull_request:
 
 jobs:
   build_linux:
@@ -12,7 +13,19 @@ jobs:
 
       - uses: actions/setup-go@v6
         with:
-          go-version: '^1.23'
+          go-version: '1.23'
+
+      - uses: mlugg/setup-zig@v1
+        with:
+          version: 0.14.0
+
+      - name: Verify toolchain
+        run: |
+          go version
+          zig version
+
+      - name: Build host binary
+        run: make host
 
       - name: Build linux/amd64
         run: make linux_amd64
