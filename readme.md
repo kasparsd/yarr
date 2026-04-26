@@ -52,6 +52,13 @@ See `yarr -h` for the full runtime help text.
 
 ## development
 
+Prerequisites:
+
+* Go >= 1.23 for `make serve` and `make test`
+* A C compiler for CGO-backed SQLite builds
+* Docker for local image builds
+* Docker Buildx for multi-arch image builds
+
 Local development run:
 
 ```sh
@@ -70,10 +77,37 @@ Development container server:
 make dev-docker CMD='make serve'
 ```
 
+Run build or test commands in the development container:
+
+```sh
+make dev-docker CMD='make build'
+make dev-docker CMD='make test'
+docker compose run --rm yarr-dev make test
+```
+
+Run the test suite:
+
+```sh
+make test
+```
+
 Local image build:
 
 ```sh
 make build-docker
+```
+
+The production image stays minimal and does not include the build toolchain. The development container uses the Dockerfile `dev` stage and mounts the source tree into `/src`.
+
+Run the image:
+
+```sh
+docker run -it --rm \
+  -p 7070:7070 \
+  -v yarr_data:/data \
+  yarr:$(git describe --tags --always --dirty | sed 's/^v//') \
+  -addr 0.0.0.0:7070 \
+  -db /data/yarr.db
 ```
 
 Tagged releases derive the embedded version from Git tags. Untagged builds fall back to the nearest Git description plus the short commit hash.
@@ -84,15 +118,32 @@ Multi-arch image build:
 make build-docker-multiarch
 ```
 
+Versioning:
+
+* release tags such as `v2.6` become embedded version `2.6`
+* untagged builds use `git describe --tags --always --dirty`
+* the short Git hash is injected separately and shown by `yarr -version`
+
+You can verify the version in a built image with:
+
+```sh
+docker run --rm yarr:$(git describe --tags --always --dirty | sed 's/^v//') -version
+```
+
 ## releases
 
 Pushing a `v*` Git tag publishes:
 
 * Multi-arch container images to `ghcr.io/kasparsd/yarr`
 
+Release process:
+
+1. Create and push a version tag such as `v2.7`.
+2. The test workflow validates the containerized build and test steps on pushes and pull requests.
+3. The publish workflow builds and pushes the multi-arch image to the registry.
+
 See more:
 
-* [Building from source code](doc/build.md)
 * [Fever API support](doc/fever.md)
 
 ## credits
