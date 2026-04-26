@@ -34,19 +34,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Normalize app version
-        id: app_version
-        run: echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
-          context: .
-          file: ./Dockerfile
           push: true
           build-args: |
-            VERSION=${{ steps.app_version.outputs.value }}
-            GITHASH=${{ github.sha }}
+            VERSION=${{ steps.meta.outputs.version }}
+            GITHASH=${{ steps.meta.outputs.revision }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
