@@ -20,17 +20,23 @@ Run the app directly:
 make serve
 ```
 
+Open a shell in the development container:
+
+```sh
+make dev-docker
+```
+
 Run the app in the development container:
 
 ```sh
-make docker-dev
+make dev-docker CMD='make serve'
 ```
 
-Open a shell in the development container and run build or test commands there:
+Run build or test commands in the development container:
 
 ```sh
-make docker-dev-shell
-docker compose run --rm yarr-dev make build
+make dev-docker CMD='make build'
+make dev-docker CMD='make test'
 docker compose run --rm yarr-dev make test
 ```
 
@@ -45,7 +51,7 @@ make test
 Build the local image:
 
 ```sh
-make docker
+make build-docker
 ```
 
 The production image stays minimal and does not include the build toolchain. The development container uses the Dockerfile `dev` stage and mounts the source tree plus Go build caches.
@@ -64,7 +70,7 @@ docker run -it --rm \
 Build the multi-arch image locally:
 
 ```sh
-make docker-multiarch
+make build-docker-multiarch
 ```
 
 ## Versioning
@@ -84,5 +90,5 @@ docker run --rm yarr:$(git describe --tags --always --dirty | sed 's/^v//') -ver
 ## Release process
 
 1. Create and push a version tag such as `v2.7`.
-2. The build workflow validates the Docker image on pushes and pull requests.
+2. The test workflow validates the containerized build and test steps on pushes and pull requests.
 3. The publish workflow builds and pushes the multi-arch image to the registry.
