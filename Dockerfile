@@ -12,7 +12,11 @@ FROM dev AS build
 COPY . .
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/root/go/pkg \
-  make build
+  make build && make release
+
+# Just the release artifact for each platform.
+FROM scratch AS release
+COPY --from=build /src/out/yarr-* /
 
 # Final release.
 FROM alpine:${ALPINE_VERSION}

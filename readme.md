@@ -154,15 +154,18 @@ If you have trouble using Fever, open an issue and mention `@icefed`.
 
 ## releases
 
-Pushing a `v*` Git tag publishes:
+Every push runs the release workflow.
 
-* Multi-arch container images to `ghcr.io/kasparsd/yarr`
+Publishing behavior:
+
+* Pushes to `main` publish multi-arch container images to `ghcr.io/kasparsd/yarr`
+* Pushes to `v*` tags publish multi-arch container images to `ghcr.io/kasparsd/yarr` and attach Linux binaries such as `yarr-linux-amd64` plus checksums to the matching GitHub release
 
 Release process:
 
-1. Create and push a version tag such as `v2.7`.
-2. The test workflow validates the containerized build and test steps on pushes and pull requests.
-3. The publish workflow builds and pushes the multi-arch image to the registry.
+1. Push any branch to validate the release container build in CI.
+2. Push to `main` to publish container image updates.
+3. Create and push a version tag such as `v2.7` to publish the matching GitHub release assets and multi-arch container image.
 
 ## credits
 
