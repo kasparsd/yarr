@@ -2,10 +2,14 @@
 
 services:
   yarr-dev:
-    build: .
+    build:
+      context: .
+      target: dev
+    working_dir: /src
     ports:
       - 7070:7070
     volumes:
+      - .:/src
       - yarr_data:/data
 
 volumes:

@@ -20,6 +20,20 @@ Run the app directly:
 make serve
 ```
 
+Run the app in the development container:
+
+```sh
+make docker-dev
+```
+
+Open a shell in the development container and run build or test commands there:
+
+```sh
+make docker-dev-shell
+docker compose run --rm yarr-dev make build
+docker compose run --rm yarr-dev make test
+```
+
 Run the test suite:
 
 ```sh
@@ -33,6 +47,8 @@ Build the local image:
 ```sh
 make docker
 ```
+
+The production image stays minimal and does not include the build toolchain. The development container uses the Dockerfile `dev` stage and mounts the source tree plus Go build caches.
 
 Run the image:
 
