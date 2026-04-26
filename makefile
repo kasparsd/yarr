@@ -2,10 +2,10 @@ RAW_VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo 
 VERSION := $(patsubst v%,%,$(RAW_VERSION))
 GITHASH ?= $(shell git rev-parse --short=8 HEAD 2>/dev/null || echo unknown)
 
-GO_TAGS    = sqlite_foreign_keys sqlite_json
+GO_TAGS = sqlite_foreign_keys sqlite_json
 GO_LDFLAGS = -s -w -X 'main.Version=$(VERSION)' -X 'main.GitHash=$(GITHASH)'
 
-GO_FLAGS       = -tags "$(GO_TAGS)" -ldflags="$(GO_LDFLAGS)"
+GO_FLAGS = -tags "$(GO_TAGS)" -ldflags="$(GO_LDFLAGS)"
 GO_FLAGS_DEBUG = -tags "$(GO_TAGS) debug"
 
 CMD ?= sh
