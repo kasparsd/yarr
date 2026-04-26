@@ -130,6 +130,28 @@ You can verify the version in a built image with:
 docker run --rm yarr:$(git describe --tags --always --dirty | sed 's/^v//') -version
 ```
 
+## fever api
+
+Yarr supports the Fever API. The implementation is based on the Fever API spec:
+
+[tinytinyrss-fever-plugin fever-api.md](https://github.com/DigitalDJ/tinytinyrss-fever-plugin/blob/master/fever-api.md)
+
+Because the Fever API definition is not very clear, compatibility can vary between servers and clients.
+
+These apps have been tested to work with yarr. Feel free to test other clients and extend the list.
+
+Different apps support different URL formats. Pay attention to whether the configured server URL includes `http://` and whether it expects a trailing `/`.
+
+| App                                                                       | Platforms      | Config Server URL                                              |
+|:------------------------------------------------------------------------- | -------------- |:-------------------------------------------------------------- |
+| [Reeder](https://reederapp.com/)                                          | MacOS, iOS     | `127.0.0.1:7070/fever` or `http://127.0.0.1:7070/fever`        |
+| [ReadKit](https://readkit.app/)                                           | MacOS, iOS     | `http://127.0.0.1:7070/fever`                                  |
+| [Fluent Reader](https://github.com/yang991178/fluent-reader)              | MacOS, Windows | `http://127.0.0.1:7070/fever/`                                 |
+| [Unread](https://apps.apple.com/us/app/unread-an-rss-reader/id1363637349) | iOS            | `http://127.0.0.1:7070/fever`                                  |
+| [Fiery Feeds](https://voidstern.net/fiery-feeds)                          | MacOS, iOS     | `http://127.0.0.1:7070/fever`                                  |
+
+If you have trouble using Fever, open an issue and mention `@icefed`.
+
 ## releases
 
 Pushing a `v*` Git tag publishes:
@@ -141,10 +163,6 @@ Release process:
 1. Create and push a version tag such as `v2.7`.
 2. The test workflow validates the containerized build and test steps on pushes and pull requests.
 3. The publish workflow builds and pushes the multi-arch image to the registry.
-
-See more:
-
-* [Fever API support](doc/fever.md)
 
 ## credits
 
