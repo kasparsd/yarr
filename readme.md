@@ -58,10 +58,22 @@ Local development run:
 make serve
 ```
 
+Development container shell:
+
+```sh
+make dev-docker
+```
+
+Development container server:
+
+```sh
+make dev-docker CMD='make serve'
+```
+
 Local image build:
 
 ```sh
-make docker
+make build-docker
 ```
 
 Tagged releases derive the embedded version from Git tags. Untagged builds fall back to the nearest Git description plus the short commit hash.
@@ -69,11 +81,7 @@ Tagged releases derive the embedded version from Git tags. Untagged builds fall 
 Multi-arch image build:
 
 ```sh
-docker buildx build \
-  --platform linux/amd64,linux/arm64 \
-  -t yarr:latest \
-  -f Dockerfile \
-  .
+make build-docker-multiarch
 ```
 
 ## releases

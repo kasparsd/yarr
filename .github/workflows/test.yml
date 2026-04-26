@@ -1,7 +1,8 @@
-name: Build
+name: Test
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -13,7 +14,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build
-        run: make docker-dev CMD='make build'
+        run: make dev-docker CMD='make build'
 
       - name: Test
-        run: make docker-dev CMD='make test'
+        run: make dev-docker CMD='make test'

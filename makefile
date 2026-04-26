@@ -17,16 +17,16 @@ default: test
 build:
 	go build $(GO_FLAGS) -o ./out/yarr ./cmd/yarr
 
-docker:
+build-docker:
 	docker build \
 		-t yarr:$(VERSION) .
 
-docker-multiarch:
+build-docker-multiarch:
 	docker buildx build \
 		--platform linux/amd64,linux/arm64 \
 		-t yarr:$(VERSION) .
 
-docker-dev:
+dev-docker:
 	docker compose run --rm --service-ports yarr-dev $(CMD)
 
 serve:
@@ -37,5 +37,5 @@ test:
 
 .PHONY: \
 	build \
-	docker docker-multiarch docker-dev \
+	build-docker build-docker-multiarch dev-docker \
 	serve test
