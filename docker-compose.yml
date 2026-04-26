@@ -1,0 +1,16 @@
+# Note: this is for development only. See the example in readme.md for homelab use.
+
+services:
+  yarr-dev:
+    build:
+      context: .
+      target: dev
+    working_dir: /src
+    ports:
+      - 7070:7070
+    volumes:
+      - .:/src
+      - yarr_data:/data
+
+volumes:
+  yarr_data:

@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: kasparsd/yarr
+  RELEASE_DIR: dist/release
+
+jobs:
+  release-binaries:
+    name: Release Binaries
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: docker/setup-qemu-action@v4
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Export release binaries
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          target: release
+          platforms: linux/amd64,linux/arm64
+          outputs: type=local,dest=${{ env.RELEASE_DIR }},platform-split=false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Generate checksums
+        run: sha256sum ${{ env.RELEASE_DIR }}/yarr-* > checksums.txt
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" "${{ env.RELEASE_DIR }}"/* \
+            --generate-notes \
+            --title "${GITHUB_REF_NAME}" \
+            --verify-tag
+
+  release-docker:
+    name: Publish Docker Images
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: docker/setup-qemu-action@v4
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - uses: docker/login-action@v4
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v7
+        with:
+          push: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

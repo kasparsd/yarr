@@ -8,7 +8,7 @@
     <link rel="icon" href="./static/graphicarts/favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="./static/graphicarts/favicon.png" type="image/png">
     <link rel="manifest" href="./manifest.json" />
-    <meta name="theme-color" content="" />
+    <meta name="theme-color" content="#0e0e0e" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script>
         window.app = window.app || {}
@@ -16,7 +16,7 @@
         window.app.authenticated = {% .authenticated %}
     </script>
 </head>
-<body class="theme-{% .settings.theme_name %}">
+<body>
     <div id="app" class="d-flex" :class="{'feed-selected': feedSelected !== null, 'item-selected': itemSelected !== null}" v-cloak>
         <!-- feed list -->
         <div id="col-feed-list" class="vh-100 position-relative d-flex flex-column border-right flex-shrink-0" :style="{width: feedListWidth+'px'}">
@@ -62,21 +62,6 @@
                     </button>
 
                     <div class="dropdown-divider"></div>
-
-                    <header class="dropdown-header" role="heading" aria-level="2">Theme</header>
-                    <div class="row text-center m-0">
-                        <button class="btn btn-link col-4 px-0 rounded-0"
-                                :class="'theme-'+t"
-                                :aria-label="t"
-                                :aria-pressed="theme.name == t"
-                                @click.stop="theme.name = t"
-                                v-for="t in ['light', 'sepia', 'night']">
-                            <span class="icon" v-if="theme.name == t">{% inline "check.svg" %}</span>
-                        </button>
-                    </div>
-
-                    <div class="dropdown-divider"></div>
-
                     <header class="dropdown-header" role="heading" aria-level="2">Auto Refresh</header>
                     <div class="row text-center m-0">
                         <button class="dropdown-item col-4 px-0"
@@ -320,9 +305,9 @@
                         <span class="icon">{% inline "sliders.svg" %}</span>
                     </template>
 
-                    <button class="dropdown-item" :class="{active: !theme.font}" @click.stop="theme.font = ''">sans-serif</button>
-                    <button class="dropdown-item font-serif" :class="{active: theme.font == 'serif'}" @click.stop="theme.font = 'serif'">serif</button>
-                    <button class="dropdown-item font-monospace" :class="{active: theme.font == 'monospace'}" @click.stop="theme.font = 'monospace'">monospace</button>
+                    <button class="dropdown-item" :class="{active: !appearance.font}" @click.stop="appearance.font = ''">sans-serif</button>
+                    <button class="dropdown-item font-serif" :class="{active: appearance.font == 'serif'}" @click.stop="appearance.font = 'serif'">serif</button>
+                    <button class="dropdown-item font-monospace" :class="{active: appearance.font == 'monospace'}" @click.stop="appearance.font = 'monospace'">monospace</button>
 
                     <div class="d-flex text-center">
                         <button class="dropdown-item" style="font-size: 0.8rem" @click.stop="incrFont(-1)">A</button>
@@ -352,8 +337,8 @@
             <div v-if="itemSelectedDetails"
                  ref="content"
                  class="content px-4 pt-3 pb-5 border-top overflow-auto scroll-touch"
-                 :class="{'font-serif': theme.font == 'serif', 'font-monospace': theme.font == 'monospace'}"
-                 :style="{'font-size': theme.size + 'rem'}">
+                  :class="{'font-serif': appearance.font == 'serif', 'font-monospace': appearance.font == 'monospace'}"
+                  :style="{'font-size': appearance.size + 'rem'}">
                 <div class="content-wrapper">
                     <h1><b>{{ itemSelectedDetails.title || 'untitled' }}</b></h1>
                     <div class="text-muted">
