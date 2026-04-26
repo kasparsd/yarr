@@ -28,7 +28,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          target: release-artifacts
+          target: release
           platforms: linux/amd64,linux/arm64
           outputs: type=local,dest=${{ env.RELEASE_DIR }},platform-split=false
           cache-from: type=gha
