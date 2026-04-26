@@ -3,7 +3,8 @@ ARG ALPINE_VERSION=3.21
 
 # Development tooling.
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS dev
-RUN apk add --no-cache build-base git make
+RUN apk add --no-cache build-base git make \
+  && git config --global --add safe.directory /src
 WORKDIR /src
 
 # Builder.
