@@ -9,8 +9,8 @@ env:
   RELEASE_DIR: dist/release
 
 jobs:
-  release-packages:
-    name: Release Packages
+  release-binaries:
+    name: Release Binaries
     runs-on: ubuntu-24.04
     permissions:
       contents: write
